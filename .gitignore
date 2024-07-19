@@ -15,11 +15,11 @@ dist
 *.secrets
 
 # Ignore generated templ files
-# *_templ.go
-# *_templ.txt
+*_templ.go
+*_templ.txt
 
 # Ignore generated minified styles
-# *.min.css
+*.min.css
 
 # Ignore terraform dependencies
 .terraform/
