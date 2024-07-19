@@ -2,8 +2,11 @@ package handler
 
 import (
 	"github.com/google/uuid"
+	"github.com/grindlemire/htmx-templ-template/pkg/log"
 	"github.com/grindlemire/htmx-templ-template/web/pages/home"
 	"github.com/labstack/echo/v4"
+	"github.com/pkg/errors"
+	"go.uber.org/zap"
 )
 
 type HomeHandler struct {
@@ -25,5 +28,10 @@ func (h *HomeHandler) RenderHomepage(c echo.Context) error {
 }
 
 func (h *HomeHandler) GetRandomString(c echo.Context) error {
+
+	exampleErr := errors.New("example error")
+	wrappedErr := errors.Wrap(exampleErr, "wrapped error")
+	zap.S().Errorw("example error", log.Callers(wrappedErr))
+
 	return render(c, home.RandomString(uuid.NewString()))
 }

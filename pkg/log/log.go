@@ -1,10 +1,12 @@
 package log
 
 import (
+	"fmt"
 	"os"
 	"strings"
 	"time"
 
+	"github.com/pkg/errors"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
@@ -55,4 +57,51 @@ func InitGlobal() error {
 
 	zap.ReplaceGlobals(logger)
 	return nil
+}
+
+type stackTracer interface {
+	StackTrace() errors.StackTrace
+}
+
+type stackOpt struct {
+	withStack bool
+}
+
+type opt func(*stackOpt)
+
+func WithStack() opt {
+	return func(o *stackOpt) {
+		o.withStack = true
+	}
+}
+
+func Callers(err error, opts ...opt) []zap.Field {
+	o := &stackOpt{}
+	for _, opt := range opts {
+		opt(o)
+	}
+
+	stack := ""
+	caller := ""
+	fun := ""
+	if err, ok := err.(stackTracer); ok {
+		for i, f := range err.StackTrace() {
+			if i == 0 {
+				caller = fmt.Sprintf("%s:%d", f, f)
+				fun = fmt.Sprintf("%n", f)
+			}
+			stack = fmt.Sprintf("%s%+s:%d\n", stack, f, f)
+		}
+	}
+
+	fields := []zap.Field{
+		zap.String("err_caller", caller),
+		zap.String("err_func", fun),
+	}
+
+	if o.withStack {
+		fields = append(fields, zap.String("err_stack", stack))
+	}
+
+	return fields
 }

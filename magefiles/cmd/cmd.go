@@ -154,11 +154,9 @@ func Run(ctx context.Context, opts ...cmdopt) (err error) {
 		done <- cmd.Wait()
 	}()
 
-	zap.S().Infof("Starting listening for subprocess %s", cmd.String())
 	for {
 		select {
 		case err = <-done:
-			zap.S().Infof("subprocess %s finished", cmd.String())
 			return err
 		case <-sigCh:
 			zap.S().Debugf("killing subprocess %s", cmd.String())
