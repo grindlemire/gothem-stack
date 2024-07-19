@@ -1,4 +1,4 @@
-<div style="text-align: center;">
+<div align="center" style="text-align: center;">
   <img src="gopher-batman.png" alt="Description" style="width: 50%; max-width: 300px;">
 </div>
 
