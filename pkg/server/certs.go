@@ -91,7 +91,7 @@ func generateX509Cert(privateKey *rsa.PrivateKey) (b []byte, err error) {
 	template := x509.Certificate{
 		SerialNumber: big.NewInt(1),
 		Subject: pkix.Name{
-			Organization: []string{"Alethi Inc"},
+			Organization: []string{"ACME corp"},
 		},
 		NotBefore: time.Now(),
 		NotAfter:  time.Now().Add(time.Hour * 24 * 180),
