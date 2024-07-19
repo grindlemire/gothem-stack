@@ -43,7 +43,8 @@ func install(ctx context.Context) error {
 		return err
 	}
 
-	mg.SerialCtxDeps(ctx, tidy)
+	zap.S().Info("running go mod tidy")
+	mg.SerialCtxDeps(ctx, templ, tidy)
 
 	zap.S().Info("installing frontend deps")
 	err = cmd.Run(ctx,
