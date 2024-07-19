@@ -31,8 +31,8 @@ func (h *HomeHandler) GetRandomString(c echo.Context) error {
 
 	err := DoThing()
 	if err != nil {
-		zap.L().Error("example error", log.Callers(err)...)
-		zap.L().Error("example error with stacktrace", log.Callers(err, log.WithStack())...)
+		zap.L().Info("example error", log.Callers(err)...)
+		// zap.L().Info("example error with stacktrace", log.Callers(err, log.WithStack())...)
 	}
 
 	return render(c, home.RandomString(uuid.NewString()))
