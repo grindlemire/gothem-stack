@@ -52,6 +52,7 @@ func run(ctx context.Context) error {
 	err = cmd.Run(ctx,
 		cmd.WithCMD(
 			"air",
+			"-c", ".air.toml",
 		),
 	)
 	if err != nil {
