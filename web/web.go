@@ -3,6 +3,7 @@ package web
 import (
 	"embed"
 	"io/fs"
+	"net/http"
 
 	"github.com/labstack/echo/v4"
 	"github.com/pkg/errors"
@@ -20,5 +21,16 @@ func RegisterStaticAssets(e *echo.Echo) error {
 		return errors.Wrap(err, "processing public assets")
 	}
 	e.StaticFS("/dist", assets)
+
+	// independently return the favicon because some robots like to pull from this path
+	e.GET("/favicon.ico", func(c echo.Context) error {
+		favicon, err := public.ReadFile("public/favicon.ico")
+		if err != nil {
+			return errors.Wrap(err, "reading favicon")
+		}
+
+		return c.Blob(http.StatusOK, "image/x-icon", favicon)
+	})
+
 	return nil
 }
