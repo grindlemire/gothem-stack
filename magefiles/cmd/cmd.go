@@ -154,9 +154,11 @@ func Run(ctx context.Context, opts ...cmdopt) (err error) {
 		done <- cmd.Wait()
 	}()
 
+	zap.S().Infof("Starting listening for subprocess %s", cmd.String())
 	for {
 		select {
 		case err = <-done:
+			zap.S().Infof("subprocess %s finished", cmd.String())
 			return err
 		case <-sigCh:
 			zap.S().Debugf("killing subprocess %s", cmd.String())
@@ -165,52 +167,10 @@ func Run(ctx context.Context, opts ...cmdopt) (err error) {
 				return errors.Wrap(err, "sending cancel signal")
 			}
 		case <-ctx.Done():
-			zap.S().Debugf("context cancelled, killing subprocess %s", cmd.String())
+			zap.S().Infof("context cancelled, killing subprocess %s", cmd.String())
 			cmd.Process.Signal(os.Interrupt)
 			_, err := cmd.Process.Wait()
 			return err
 		}
 	}
-}
-
-func cancel(cmd *exec.Cmd) func() {
-	return func() {
-		cmd.Process.Signal(os.Interrupt)
-	}
-}
-
-// RunBackground runs a command in the background and gives a handle to cancel it back
-func RunBackground(ctx context.Context, opts ...cmdopt) (cancelFN func(), err error) {
-	cmd := CMD(ctx, opts...)
-	// Create a signal channel
-	sigCh := make(chan os.Signal, 1)
-
-	// Register a signal handler for SIGINT
-	signal.Notify(sigCh, os.Interrupt)
-
-	// start the command and return the result
-	if err := cmd.Start(); err != nil {
-		return cancel(cmd), errors.Wrap(err, "starting subprocess")
-	}
-	done := make(chan error, 1)
-	go func() {
-		done <- cmd.Wait()
-	}()
-
-	go func() {
-		for {
-			select {
-			case <-done:
-				return
-			case <-sigCh:
-				zap.S().Infof("killing subprocess %s", cmd.String())
-				cmd.Process.Signal(os.Interrupt)
-			case <-ctx.Done():
-				zap.S().Info("context cancelled, killing subprocess")
-				cmd.Process.Signal(os.Interrupt)
-			}
-		}
-	}()
-
-	return cancel(cmd), nil
 }

@@ -13,7 +13,7 @@ tmp_dir = "/tmp"
   full_bin = ""
   include_dir = []
   include_ext = ["go", "css"]
-  kill_delay = "1s"
+  kill_delay = "500ms"
   send_interrupt = true
   stop_on_error = true
 
