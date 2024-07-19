@@ -22,8 +22,7 @@ func run(ctx context.Context) error {
 		err = cmd.Run(ctx,
 			cmd.WithDir("./web"),
 			cmd.WithCMD(
-				"npx",
-				"tailwindcss",
+				"node_modules/.bin/tailwindcss",
 				"-i", "tailwind.css",
 				"-o", "public/styles.min.css",
 				"--watch",

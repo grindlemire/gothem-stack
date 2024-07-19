@@ -17,25 +17,6 @@ func install(ctx context.Context) error {
 
 	zap.S().Infof("mage running with configs: %+v", config)
 
-	err = cmd.Run(ctx,
-		cmd.WithCMD(
-			"npx", "--version",
-		),
-	)
-	if err != nil {
-		zap.S().Info("installing npx")
-		err = cmd.Run(ctx,
-			cmd.WithCMD(
-				"npm",
-				"install",
-				"-g", "npx",
-			),
-		)
-		if err != nil {
-			return err
-		}
-	}
-
 	// pin to a specific commit for now. See https://github.com/air-verse/air/issues/534
 	zap.S().Info("installing air at pinned commit for #534")
 	err = cmd.Run(ctx,
