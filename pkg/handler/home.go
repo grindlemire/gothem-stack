@@ -31,7 +31,7 @@ func (h *HomeHandler) GetRandomString(c echo.Context) error {
 
 	exampleErr := errors.New("example error")
 	wrappedErr := errors.Wrap(exampleErr, "wrapped error")
-	zap.S().Errorw("example error", log.Callers(wrappedErr))
+	zap.L().Error("example error", log.Callers(wrappedErr)...)
 
 	return render(c, home.RandomString(uuid.NewString()))
 }
