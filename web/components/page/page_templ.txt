@@ -1,3 +1,0 @@
-<!doctype html><html lang=\"en\" class=\"h-full\" data-theme=\"light\"><head><meta charset=\"UTF-8\"><title>
-</title><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><meta name=\"language\" content=\"English\"><script src=\"https://unpkg.com/htmx.org@2.0.1\" integrity=\"sha384-QWGpdj554B4ETpJJC9z+ZHJcA/i59TyjxEPXiiUgN2WmTyV5OEZWCD6gQhgkdpB/\" crossorigin=\"anonymous\"></script><link rel=\"stylesheet\" href=\"/dist/styles.min.css\"></head><body class=\"h-full cursor-default bg-slate-200\" hx-sync=\"this:queue all\">
-</body></html>
