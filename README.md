@@ -19,7 +19,7 @@ For the frontend libraries it uses [tailwindcss](https://tailwindcss.com/) and [
 
 This will set you up with a working dev environment using htmx, go-templ, tailwind, and daisyUI.
 
-## How to Install
+## Quickstart
 1. Install npm in your path `brew install node; brew install npm`
 1. Install mage in your path `brew install mage`. See [https://magefile.org/](https://magefile.org/) for other installation instructions
 1. Run `mage install`
