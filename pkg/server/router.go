@@ -28,7 +28,7 @@ func NewRouter(ctx context.Context) (h http.Handler, err error) {
 		return h, err
 	}
 	homeHandler.RegisterRoutes(
-		e.Group("/home", auth.Middleware()),
+		e.Group("", auth.Middleware()),
 	)
 
 	// register the static assets like the favicon and the css

@@ -19,7 +19,7 @@ func NewHomeHandler() (h *HomeHandler, err error) {
 
 // RegisterRoutes registers all the subroutes for the home handler to manage
 func (h *HomeHandler) RegisterRoutes(g *echo.Group) {
-	g.GET("/", h.RenderHomepage)
+	g.GET("", h.RenderHomepage)
 	g.GET("/random-string", h.GetRandomString)
 }
 
@@ -29,9 +29,24 @@ func (h *HomeHandler) RenderHomepage(c echo.Context) error {
 
 func (h *HomeHandler) GetRandomString(c echo.Context) error {
 
-	exampleErr := errors.New("example error")
-	wrappedErr := errors.Wrap(exampleErr, "wrapped error")
-	zap.L().Error("example error", log.Callers(wrappedErr)...)
+	err := DoThing()
+	if err != nil {
+		zap.L().Error("example error", log.Callers(err)...)
+		zap.L().Error("example error with stacktrace", log.Callers(err, log.WithStack())...)
+	}
 
 	return render(c, home.RandomString(uuid.NewString()))
+}
+
+func DoThing() error {
+	return DoSubThing()
+}
+
+func DoSubThing() error {
+	// wrap third party errors at the callsite to get nice stack traces
+	return errors.Wrap(ThirdPartyError(), "wrapped third party error")
+}
+
+func ThirdPartyError() error {
+	return errors.New("third party error")
 }
