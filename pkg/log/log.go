@@ -28,7 +28,6 @@ func InitGlobal() error {
 		logger = zap.New(
 			core,
 			zap.AddCaller(),
-			zap.AddCallerSkip(1),
 		).Named("prod")
 	} else {
 		// if we are not in gcp use a console logger
@@ -53,7 +52,6 @@ func InitGlobal() error {
 		logger = zap.New(
 			core,
 			zap.AddCaller(),
-			zap.AddCallerSkip(1),
 		).Named("dev")
 	}
 
