@@ -43,4 +43,4 @@ When you make changes to your templ files or any of your go code everything will
 I usually use postgres and [sqlc](https://sqlc.dev/) and they work great. If people start to use this and want to see that added in I'll do so.
 
 ### But Gotham is spelled with an 'a'....
-Yea I know it's spelled with an 'a' :] I was trying to come up with a name that was easier to say and interact with and gothem is what I came up with.
+Yea I know it's spelled with an 'a' :] I was trying to come up with a name that was easier to say and interact with than 'htmx-templ-template' and gothem is what I came up with.
