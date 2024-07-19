@@ -3,7 +3,7 @@
 </div>
 
 <p align="center"><a href="https://pkg.go.dev/github.com/Permify/policy-enforcer?tab=doc" 
-target="_blank"></a><img src="https://img.shields.io/badge/Go-1.22+-00ADD8?style=for-the-badge&logo=go" alt="go version" />&nbsp;&nbsp;<img src="https://img.shields.io/github/license/grindlemire/gothem-stack?style=for-the-badge" alt="license" />&nbsp;&nbsp;<img src="https://img.shields.io/github/last-commit/grindlemire/gothem-stack?style=for-the-badge" alt="tweet" />&nbsp;&nbsp</p>
+target="_blank"></a><img src="https://img.shields.io/badge/Go-1.22+-00ADD8?style=for-the-badge&logo=go" alt="go version" />&nbsp;&nbsp;<img src="https://img.shields.io/github/license/grindlemire/gothem-stack?style=for-the-badge" alt="license" />
 
 # gothem-stack
 
