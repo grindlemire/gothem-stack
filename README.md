@@ -17,8 +17,6 @@ An end to end [htmx](https://htmx.org) and [go-templ](https://templ.guide) templ
 
 For the frontend libraries it uses [tailwindcss](https://tailwindcss.com/) and [daisyUI](https://daisyui.com/) for styling. You can easily integrate [alpine-js](https://alpinejs.dev/) if you desire to.
 
-This will set you up with a working dev environment using htmx, go-templ, tailwind, and daisyUI.
-
 ## Quickstart
 1. Install npm in your path `brew install node; brew install npm`
 1. Install mage in your path `brew install mage`. See [https://magefile.org/](https://magefile.org/) for other installation instructions
