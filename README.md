@@ -15,7 +15,7 @@ An end to end [htmx](https://htmx.org) and [go-templ](https://templ.guide) templ
 **E**cho\
 **M**age
 
-For the frontend libraries it uses [tailwindcss](https://tailwindcss.com/) and [daisyUI](https://daisyui.com/) for styling. You can easily integrate [alpine-js](https://alpinejs.dev/) if you desire to.
+For the frontend libraries it uses [tailwindcss](https://tailwindcss.com/) and [daisyUI](https://daisyui.com/) for styling. You can easily integrate [alpine-js](https://alpinejs.dev/) if you desire.
 
 ## Quickstart
 1. Install npm in your path `brew install node; brew install npm`
