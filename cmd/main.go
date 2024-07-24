@@ -7,8 +7,8 @@ import (
 	"os"
 	"os/signal"
 
-	"github.com/grindlemire/htmx-templ-template/pkg/log"
-	"github.com/grindlemire/htmx-templ-template/pkg/server"
+	"github.com/grindlemire/gothem-stack/pkg/log"
+	"github.com/grindlemire/gothem-stack/pkg/server"
 
 	"github.com/urfave/cli/v2"
 	"go.uber.org/zap"

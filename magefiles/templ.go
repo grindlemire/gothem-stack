@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 
-	"github.com/grindlemire/htmx-templ-template/magefiles/cmd"
+	"github.com/grindlemire/gothem-stack/magefiles/cmd"
 
 	"go.uber.org/zap"
 )

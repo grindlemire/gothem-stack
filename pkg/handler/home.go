@@ -2,8 +2,8 @@ package handler
 
 import (
 	"github.com/google/uuid"
-	"github.com/grindlemire/htmx-templ-template/pkg/log"
-	"github.com/grindlemire/htmx-templ-template/web/pages/home"
+	"github.com/grindlemire/gothem-stack/pkg/log"
+	"github.com/grindlemire/gothem-stack/web/pages/home"
 	"github.com/labstack/echo/v4"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"

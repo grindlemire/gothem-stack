@@ -1,4 +1,4 @@
-module github.com/grindlemire/htmx-templ-template
+module github.com/grindlemire/gothem-stack
 
 go 1.22
 

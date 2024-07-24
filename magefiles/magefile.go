@@ -5,7 +5,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/grindlemire/htmx-templ-template/pkg/log"
+	"github.com/grindlemire/gothem-stack/pkg/log"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
 )

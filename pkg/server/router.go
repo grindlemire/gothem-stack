@@ -4,9 +4,9 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/grindlemire/htmx-templ-template/pkg/auth"
-	"github.com/grindlemire/htmx-templ-template/pkg/handler"
-	"github.com/grindlemire/htmx-templ-template/web"
+	"github.com/grindlemire/gothem-stack/pkg/auth"
+	"github.com/grindlemire/gothem-stack/pkg/handler"
+	"github.com/grindlemire/gothem-stack/web"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"

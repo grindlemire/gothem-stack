@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/kelseyhightower/envconfig"
 	"github.com/pkg/errors"
@@ -66,6 +67,13 @@ func Run(ctx context.Context) error {
 	for {
 		select {
 		case <-ctx.Done():
+			shutdownCTX, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+			defer cancel()
+
+			err = server.Shutdown(shutdownCTX)
+			if err != nil {
+				return err
+			}
 			return ctx.Err()
 		case err := <-errCh:
 			return err
