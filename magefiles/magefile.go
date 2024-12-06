@@ -100,6 +100,21 @@ func Templ() (err error) {
 	return templ(WithConfig(ctx, os.Args[2:]...))
 }
 
+func Static() (err error) {
+	defer func(now time.Time) {
+		if r := recover(); r != nil {
+			err = errors.Errorf("%s", r)
+		}
+		finish(now, err)
+	}(time.Now())
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	// Ignore the first two args since they are "mage" and "static"
+	return static(WithConfig(ctx, os.Args[2:]...))
+}
+
 func finish(start time.Time, err error) {
 	zap.S().Infof("elapsed time: %s", time.Since(start))
 	// This is a hack to get around the fact that mage treats command line args

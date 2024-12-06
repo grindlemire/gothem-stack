@@ -25,6 +25,18 @@ templ Page() {
 	}
 }
 
+templ StaticPage(inlineCSS ...string) {
+	@page.Base("static-home", inlineCSS...) {
+		<div class="flex items-center justify-center min-h-screen">
+			<div class="card w-96 bg-base-100 shadow-xl">
+				<div class="card-body">
+					<h2 class="card-title">Static Page</h2>
+				</div>
+			</div>
+		</div>
+	}
+}
+
 templ RandomString(s string) {
 	<div id="random-string" class="mt-4 text-center text-lg">{ s }</div>
 }
