@@ -114,7 +114,7 @@ func copyFile(src, dst string) error {
 func renderStaticPage() (string, error) {
 	// Render the page with a link to the external CSS file
 	var s strings.Builder
-	err := home.StaticPage().Render(context.Background(), &s)
+	err := home.Page().Render(context.Background(), &s)
 	if err != nil {
 		return "", errors.Wrap(err, "rendering static page")
 	}

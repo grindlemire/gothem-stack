@@ -89,7 +89,7 @@ func install(ctx context.Context) error {
 	}
 
 	// install backend dependencies if the backend arg is passed
-	if config.Args[0] == "backend" {
+	if config.Args[0] == "deploy" {
 		err = backend(ctx)
 		if err != nil {
 			return err

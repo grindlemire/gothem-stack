@@ -4,8 +4,10 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/grindlemire/gothem-stack/magefiles/cmd"
+	"github.com/grindlemire/gothem-stack/pkg/version"
 
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
@@ -22,16 +24,42 @@ func deploy(ctx context.Context) error {
 		return errors.New("no arguments passed. Please pass 'backend' or 'frontend' to deploy the respective services")
 	}
 
+	var ver version.Version
+	// Only handle versioning for backend
+	if config.Args[0] == "backend" || config.Args[0] == "all" {
+		// Default to patch if no version increment specified
+		versionLevel := "patch"
+		if len(config.Args) > 1 {
+			versionLevel = config.Args[1]
+		}
+
+		// Read current version
+		ver, err = version.Read()
+		if err != nil {
+			return errors.Wrap(err, "failed to read version")
+		}
+
+		// Increment version
+		if err := ver.Increment(versionLevel); err != nil {
+			return errors.Wrap(err, "failed to increment version")
+		}
+	}
+
 	// First, ensure we have the latest static build
 	if err := static(ctx); err != nil {
 		return errors.Wrap(err, "failed to build static files")
 	}
 
 	if config.Args[0] == "backend" || config.Args[0] == "all" {
-		err = deployBackend(ctx)
+		err = deployBackend(ctx, ver)
 		if err != nil {
 			return errors.Wrap(err, "failed to deploy backend to Cloud Run")
 		}
+		// Save new version after successful backend deployment
+		if err := version.Write(ver); err != nil {
+			return errors.Wrap(err, "failed to save new version")
+		}
+		zap.S().Infof("Successfully deployed backend version %s", ver)
 	}
 
 	if config.Args[0] == "frontend" || config.Args[0] == "all" {
@@ -39,16 +67,17 @@ func deploy(ctx context.Context) error {
 		if err != nil {
 			return errors.Wrap(err, "failed to deploy to firebase")
 		}
+		zap.S().Info("Successfully deployed frontend")
 	}
 
 	zap.S().Info("Successfully completed deployment")
 	return nil
 }
 
-func deployBackend(ctx context.Context) error {
+func deployBackend(ctx context.Context, ver version.Version) error {
 	zap.S().Info("Deploying backend to Cloud Run...")
 	// check if gcloud is installed
-	err := cmd.Run(ctx, cmd.WithCMD("gcloud", "version"))
+	err := cmd.Run(ctx, cmd.WithCMD("gcloud", "version"), cmd.WithSilent())
 	if err != nil {
 		return errors.Wrap(err, "gcloud is not installed. Run `mage install backend` to install it")
 	}
@@ -63,22 +92,54 @@ func deployBackend(ctx context.Context) error {
 		region = "us-central1" // Default region
 	}
 
-	serviceName := "gothem-backend"
-	imageTag := fmt.Sprintf("gcr.io/%s/%s:latest", projectID, serviceName)
+	serviceName := os.Getenv("CLOUD_RUN_SERVICE_NAME")
+	if serviceName == "" {
+		return errors.New("CLOUD_RUN_SERVICE_NAME environment variable not set")
+	}
 
-	// Build and push using Cloud Build
-	err = cmd.Run(ctx, cmd.WithCMD(
-		"gcloud", "builds", "submit",
-		"--tag", imageTag,
-	))
+	// Ensure the Artifact Registry is initialized
+	err = ensureArtifactRegistry(ctx, projectID, region, serviceName)
 	if err != nil {
-		return errors.Wrap(err, "failed to build and push image")
+		return errors.Wrap(err, "failed to initialize artifact registry")
+	}
+
+	err = ensureCloudBuild(ctx, projectID, region, serviceName)
+	if err != nil {
+		return errors.Wrap(err, "failed to initialize cloud build")
+	}
+
+	err = ensureCloudRun(ctx, projectID)
+	if err != nil {
+		return errors.Wrap(err, "failed to initialize cloud run")
+	}
+
+	// create new tag name in accordance to the format gcr requires
+	tagname := fmt.Sprintf(
+		"%s-docker.pkg.dev/%s/%s/gs-%s:v%s",
+		region,
+		projectID,
+		serviceName,
+		"backend",
+		ver,
+	)
+
+	err = cmd.Run(ctx,
+		cmd.WithCMD(
+			"gcloud", "builds", "submit",
+			"--project", projectID,
+			"--region", region,
+			"--config", "./cloudbuild.json",
+			"--substitutions", fmt.Sprintf("_IMAGE_NAME=%s", tagname),
+		),
+	)
+	if err != nil {
+		return err
 	}
 
 	// Deploy to Cloud Run
 	err = cmd.Run(ctx, cmd.WithCMD(
 		"gcloud", "run", "deploy", serviceName,
-		"--image", imageTag,
+		"--image", tagname,
 		"--platform", "managed",
 		"--region", region,
 		"--project", projectID,
@@ -88,25 +149,88 @@ func deployBackend(ctx context.Context) error {
 		return errors.Wrap(err, "failed to deploy to cloud run")
 	}
 
+	zap.S().Info("Successfully deployed to Cloud Run")
+	return nil
+}
+
+func ensureCloudRun(ctx context.Context, projectID string) error {
+	// Check if Cloud Run API is enabled
+	err := cmd.Run(ctx, cmd.WithCMD(
+		"gcloud", "services", "enable", "run.googleapis.com",
+		"--project", projectID,
+	))
+	if err != nil {
+		return errors.Wrap(err, "failed to enable Cloud Run API")
+	}
+	return nil
+}
+
+func ensureArtifactRegistry(ctx context.Context, projectID, region, repoName string) error {
+	// Check if Artifact Registry API is enabled
+	err := cmd.Run(ctx, cmd.WithCMD(
+		"gcloud", "services", "enable", "artifactregistry.googleapis.com",
+		"--project", projectID,
+	))
+	if err != nil {
+		return errors.Wrap(err, "failed to enable Artifact Registry API")
+	}
+
+	// Check if repository exists
+	repoExists := cmd.Run(ctx,
+		cmd.WithCMD(
+			"gcloud", "artifacts", "repositories", "describe", repoName,
+			"--project", projectID,
+			"--location", region,
+		),
+		cmd.WithSilent(),
+	) == nil
+
+	// Create repository if it doesn't exist
+	if !repoExists {
+		zap.S().Infof("Creating Artifact Registry repository %s in %s", repoName, region)
+		err = cmd.Run(ctx, cmd.WithCMD(
+			"gcloud", "artifacts", "repositories", "create", repoName,
+			"--repository-format", "docker",
+			"--location", region,
+			"--project", projectID,
+		))
+		if err != nil {
+			return errors.Wrap(err, "failed to create Artifact Registry repository")
+		}
+	}
+
+	return nil
+}
+
+func ensureCloudBuild(ctx context.Context, projectID, region, serviceName string) error {
+	// Enable Cloud Build API
+	err := cmd.Run(ctx, cmd.WithCMD(
+		"gcloud", "services", "enable", "cloudbuild.googleapis.com",
+		"--project", projectID,
+	))
+	if err != nil {
+		return errors.Wrap(err, "failed to enable Cloud Build API")
+	}
 	return nil
 }
 
 func deployFrontend(ctx context.Context) error {
+	// Removed version parameter
 	// if firebase is not installed, error out
-	err := cmd.Run(ctx, cmd.WithCMD("firebase", "version"))
+	err := cmd.Run(ctx, cmd.WithCMD("firebase", "--version"), cmd.WithSilent())
 	if err != nil {
 		return errors.Wrap(err, "firebase is not installed. Run `mage install frontend` to install it")
 	}
 
 	zap.S().Info("Deploying to Firebase hosting...")
 
-	// Deploy to Firebase using local node_modules installation
 	err = cmd.Run(ctx,
 		cmd.WithDir("web"),
 		cmd.WithCMD(
 			"firebase",
 			"deploy",
 			"--only", "hosting",
+			"--message", fmt.Sprintf("Build at %s", time.Now().Format(time.RFC3339)),
 		),
 	)
 	if err != nil {

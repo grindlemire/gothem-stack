@@ -131,6 +131,38 @@ func Deploy() (err error) {
 	return deploy(WithConfig(ctx, os.Args[2:]...))
 }
 
+// Auth will authenticate with cloud services (gcloud or firebase)
+func Auth() (err error) {
+	defer func(now time.Time) {
+		if r := recover(); r != nil {
+			err = errors.Errorf("%s", r)
+		}
+		finish(now, err)
+	}(time.Now())
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	// ignore the first two args since they are "mage" and "auth"
+	return auth(WithConfig(ctx, os.Args[2:]...))
+}
+
+// Release will deploy a specific version of the service to Cloud Run
+func Release() (err error) {
+	defer func(now time.Time) {
+		if r := recover(); r != nil {
+			err = errors.Errorf("%s", r)
+		}
+		finish(now, err)
+	}(time.Now())
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	// ignore the first two args since they are "mage" and "release"
+	return release(WithConfig(ctx, os.Args[2:]...))
+}
+
 func finish(start time.Time, err error) {
 	zap.S().Infof("elapsed time: %s", time.Since(start))
 	// This is a hack to get around the fact that mage treats command line args

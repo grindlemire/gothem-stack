@@ -1,0 +1,40 @@
+# Ignore the installed node_modules
+node_modules
+
+# Ignore the artifacts directory
+dist
+
+# Ignore template files
+*.templ
+
+# Ignore sqlc files
+*.sql
+
+# Ignore keys
+*.crt
+*.cert
+*.key
+
+# Ignore secrets and config vars
+*.secrets
+*.env
+
+# Ignore tmp files
+tmp
+
+# Ignore git files
+.gitignore
+.git
+.firebase
+
+# Ignore meta files
+.firebaserc
+.gcloudignore
+LICENSE
+README.md
+*.png
+
+# Ignore config files
+*.json
+*.toml
+*.yml

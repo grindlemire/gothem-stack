@@ -8,13 +8,17 @@
         ],
         "rewrites": [
             {
+                "source": "/favicon.ico",
+                "destination": "/dist/favicon.ico"
+            },
+            {
                 "source": "/dist/**",
                 "destination": "/dist/**"
             },
             {
                 "source": "**",
                 "run": {
-                    "serviceId": "gothem-backend",
+                    "serviceId": "gothem-stack",
                     "region": "us-central1"
                 }
             }
