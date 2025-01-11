@@ -59,8 +59,7 @@ templ Page() {
 									<input
 										type="checkbox"
 										class="toggle"
-										:checked="darkMode"
-										@click="darkMode = !darkMode; updateTheme()"
+										x-model="isDark"
 									/>
 								</label>
 							</div>
