@@ -38,7 +38,7 @@ When you make changes to your templ files or any of your go code everything will
 `mage tidy` - Run `go mod tidy`
 
 ## Cloud Deployment (Optional)
-The project also includes optional support for deploying your code to Google Cloud Run and Firebase Hosting. To use these features, you'll need to set up Google Cloud and Firebase projects first.
+The project also includes optional support for deploying your code to Google Cloud Run and Firebase Hosting. **This is by no means required to use this project, if you choose to you can just ignore all these commands and use it without cloud integration**. To use these features, you'll need to set up Google Cloud and Firebase projects first.
 
 See the example running at [gothem-stack.web.app](https://gothem-stack.web.app/)
 
