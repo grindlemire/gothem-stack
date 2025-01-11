@@ -5,6 +5,19 @@
             "firebase.json",
             "**/.*",
             "**/node_modules/**"
+        ],
+        "rewrites": [
+            {
+                "source": "/dist/**",
+                "destination": "/dist/**"
+            },
+            {
+                "source": "**",
+                "run": {
+                    "serviceId": "gothem-backend",
+                    "region": "us-central1"
+                }
+            }
         ]
     }
 }

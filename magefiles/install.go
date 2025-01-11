@@ -2,12 +2,42 @@ package main
 
 import (
 	"context"
+	"runtime"
 
 	"github.com/grindlemire/gothem-stack/magefiles/cmd"
 	"github.com/magefile/mage/mg"
+	"github.com/pkg/errors"
 
 	"go.uber.org/zap"
 )
+
+// backend installs backend-specific dependencies
+func backend(ctx context.Context) error {
+	zap.S().Info("Installing backend dependencies...")
+
+	// Install gcloud CLI
+	if runtime.GOOS == "darwin" {
+		err := cmd.Run(ctx, cmd.WithCMD(
+			"brew", "install", "google-cloud-sdk",
+		))
+		if err != nil {
+			return err
+		}
+	} else if runtime.GOOS == "linux" {
+		return errors.New("Please install the gcloud CLI manually")
+	}
+
+	// Install Firebase CLI globally
+	err := cmd.Run(ctx, cmd.WithCMD(
+		"npm", "install", "-g", "firebase-tools",
+	))
+	if err != nil {
+		return err
+	}
+
+	zap.S().Info("Deployment dependencies installed successfully")
+	return nil
+}
 
 func install(ctx context.Context) error {
 	config, err := GetConfig(ctx)
@@ -56,6 +86,14 @@ func install(ctx context.Context) error {
 	)
 	if err != nil {
 		return err
+	}
+
+	// install backend dependencies if the backend arg is passed
+	if config.Args[0] == "backend" {
+		err = backend(ctx)
+		if err != nil {
+			return err
+		}
 	}
 
 	mg.SerialCtxDeps(ctx, tidy)
