@@ -78,16 +78,18 @@ func releaseBackend(ctx context.Context, ver version.Version) error {
 	}
 
 	// Construct the image tag
-	tagname := fmt.Sprintf(
-		"%s-docker.pkg.dev/%s/%s/gs-backend:v%s",
-		region,
+	tagname, err := getImageTag(
 		projectID,
 		serviceName,
-		ver,
+		"backend",
+		fmt.Sprintf("v%s", ver),
 	)
+	if err != nil {
+		return errors.Wrap(err, "failed to get image tag")
+	}
 
 	// Deploy to Cloud Run
-	err := cmd.Run(ctx, cmd.WithCMD(
+	err = cmd.Run(ctx, cmd.WithCMD(
 		"gcloud", "run", "deploy", serviceName,
 		"--image", tagname,
 		"--platform", "managed",

@@ -17,7 +17,7 @@ func init() {
 // Config is the identifying information pulled out of the environment to execute
 // different mage commands
 type Config struct {
-	Env  string   `envconfig:"env" default:"local"`
+	Env  string   `envconfig:"env" required:"true"`
 	Args []string `envconfig:"args"    default:""`
 }
 
@@ -146,6 +146,22 @@ func Release() (err error) {
 
 	// ignore the first two args since they are "mage" and "release"
 	return release(WithConfig(ctx, os.Args[2:]...))
+}
+
+// Destroy will delete all remote cloud infrastructure created during deploy
+func Destroy() (err error) {
+	defer func(now time.Time) {
+		if r := recover(); r != nil {
+			err = errors.Errorf("%s", r)
+		}
+		finish(now, err)
+	}(time.Now())
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	// ignore the first two args since they are "mage" and "destroy"
+	return destroy(WithConfig(ctx, os.Args[2:]...))
 }
 
 func finish(start time.Time, err error) {

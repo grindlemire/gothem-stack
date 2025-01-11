@@ -20,8 +20,9 @@ func deploy(ctx context.Context) error {
 		return errors.Wrap(err, "failed to get config")
 	}
 
+	// If no arguments are passed, deploy both backend and frontend
 	if len(config.Args) == 0 {
-		return errors.New("no arguments passed. Please pass 'backend' or 'frontend' to deploy the respective services")
+		config.Args = []string{"all"}
 	}
 
 	var ver version.Version
@@ -114,14 +115,15 @@ func deployBackend(ctx context.Context, ver version.Version) error {
 	}
 
 	// create new tag name in accordance to the format gcr requires
-	tagname := fmt.Sprintf(
-		"%s-docker.pkg.dev/%s/%s/gs-%s:v%s",
-		region,
+	tagname, err := getImageTag(
 		projectID,
 		serviceName,
 		"backend",
-		ver,
+		fmt.Sprintf("v%s", ver),
 	)
+	if err != nil {
+		return errors.Wrap(err, "failed to get image tag")
+	}
 
 	err = cmd.Run(ctx,
 		cmd.WithCMD(
@@ -197,6 +199,18 @@ func ensureArtifactRegistry(ctx context.Context, projectID, region, repoName str
 		if err != nil {
 			return errors.Wrap(err, "failed to create Artifact Registry repository")
 		}
+	}
+
+	// Set cleanup policy
+	zap.S().Infof("Setting cleanup policy for repository %s", repoName)
+	err = cmd.Run(ctx, cmd.WithCMD(
+		"gcloud", "artifacts", "repositories", "set-cleanup-policies", repoName,
+		"--location", region,
+		"--project", projectID,
+		"--policy=artifact-cleanup-policy.json",
+	))
+	if err != nil {
+		return errors.Wrap(err, "failed to set cleanup policy")
 	}
 
 	return nil
