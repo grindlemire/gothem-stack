@@ -25,18 +25,6 @@ templ Page() {
 	}
 }
 
-templ StaticPage() {
-	@page.Base("static-home") {
-		<div class="flex items-center justify-center min-h-screen">
-			<div class="card w-96 bg-base-100 shadow-xl">
-				<div class="card-body">
-					<h2 class="card-title">Static Page</h2>
-				</div>
-			</div>
-		</div>
-	}
-}
-
 templ RandomString(s string) {
-	<div id="random-string" class="mt-4 text-center text-lg">GS-{ s }</div>
+	<div id="random-string" class="mt-4 text-center text-lg">GS1-{ s }</div>
 }

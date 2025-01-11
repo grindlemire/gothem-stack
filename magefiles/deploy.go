@@ -45,8 +45,8 @@ func deploy(ctx context.Context) error {
 		}
 	}
 
-	// First, ensure we have the latest static build
-	if err := static(ctx); err != nil {
+	// First, ensure we have the latest build
+	if err := build(ctx); err != nil {
 		return errors.Wrap(err, "failed to build static files")
 	}
 

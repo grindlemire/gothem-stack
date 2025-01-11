@@ -9,9 +9,6 @@ RUN go mod download
 # Copy the entire project structure
 COPY . .
 
-# Debug: List files to verify what was copied
-RUN ls -R web/pages/home/
-
 # Build the application
 RUN CGO_ENABLED=0 GOOS=linux go build -o /app/server ./cmd
 
