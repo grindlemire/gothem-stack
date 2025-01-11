@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"time"
+
 	"github.com/google/uuid"
 	"github.com/grindlemire/gothem-stack/pkg/log"
 	"github.com/grindlemire/gothem-stack/web/pages/home"
@@ -28,6 +30,7 @@ func (h *HomeHandler) RenderHomepage(c echo.Context) error {
 }
 
 func (h *HomeHandler) GetRandomString(c echo.Context) error {
+	time.Sleep(750 * time.Millisecond)
 
 	err := DoThing()
 	if err != nil {

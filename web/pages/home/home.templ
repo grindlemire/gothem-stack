@@ -5,20 +5,67 @@ import "github.com/grindlemire/gothem-stack/web/components/page"
 templ Page() {
 	@page.Base("home") {
 		<div class="flex items-center justify-center min-h-screen">
-			<div class="card w-96 bg-base-100 shadow-xl">
+			<div class="card w-94 bg-base-100 shadow-xl">
 				<div class="card-body">
-					<h2 class="card-title">Generate Random Strings:</h2>
+					<h2 class="card-title">Generate Random Strings using an HTMX call:</h2>
 					<div class="card-actions justify-center">
 						<button
 							class="btn btn-primary"
 							hx-get="/random-string"
 							hx-target="#random-string"
-							hx-swap="outerHTML"
+							hx-swap="outerHTML swap:300ms"
+							hx-indicator="#loading-spinner"
+							_="on click 
+								add .opacity-0 to #random-string
+								wait 150ms
+								set #random-string.innerHTML to ''"
 						>
 							Generate
 						</button>
 					</div>
-					<div id="random-string"></div>
+					<div class="relative">
+						<div
+							id="random-string"
+							class="h-8 flex items-center justify-center pt-4 whitespace-nowrap transition-opacity duration-300 ease-in-out"
+						></div>
+						<div
+							id="loading-spinner"
+							class="htmx-indicator loading loading-spinner loading-md absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-0 transition-opacity duration-300 ease-in-out"
+						></div>
+					</div>
+					<!-- Alpine.js Counter Example -->
+					<div class="mt-8 border-t pt-4" x-data="{ count: 0 }">
+						<h3 class="text-lg font-semibold mb-4">Alpine.js Counter:</h3>
+						<div class="flex flex-col items-center gap-4">
+							<div class="text-2xl font-bold" x-text="count"></div>
+							<div class="flex gap-2">
+								<button
+									class="btn btn-sm"
+									x-on:click="count--"
+								>
+									Decrease
+								</button>
+								<button
+									class="btn btn-sm btn-primary"
+									x-on:click="count++"
+								>
+									Increase
+								</button>
+							</div>
+							<!-- Theme Toggle -->
+							<div class="form-control">
+								<label class="label cursor-pointer gap-2">
+									<span class="label-text">Dark Mode</span>
+									<input
+										type="checkbox"
+										class="toggle"
+										:checked="darkMode"
+										@click="darkMode = !darkMode; updateTheme()"
+									/>
+								</label>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -26,5 +73,11 @@ templ Page() {
 }
 
 templ RandomString(s string) {
-	<div id="random-string" class="mt-4 text-center text-lg">GS2-{ s }</div>
+	<div
+		id="random-string"
+		class="h-8 flex items-center justify-center pt-4 whitespace-nowrap text-lg transition-opacity duration-300 ease-in-out"
+		_="on load wait 10ms then add .opacity-100"
+	>
+		GS2-{ s }
+	</div>
 }

@@ -17,7 +17,7 @@ func init() {
 // Config is the identifying information pulled out of the environment to execute
 // different mage commands
 type Config struct {
-	Env  string   `envconfig:"env" required:"true"`
+	Env  string   `envconfig:"env" default:"local"`
 	Args []string `envconfig:"args"    default:""`
 }
 
