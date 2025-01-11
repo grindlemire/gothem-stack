@@ -1,0 +1,20 @@
+{
+    "steps": [
+        {
+            "name": "gcr.io/cloud-builders/docker",
+            "args": [
+                "build",
+                "--tag",
+                "$_IMAGE_NAME",
+                "."
+            ],
+            "env": []
+        }
+    ],
+    "images": [
+        "$_IMAGE_NAME"
+    ],
+    "substitutions": {
+        "_IMAGE_NAME": "_IMAGE_NAME is required"
+    }
+}

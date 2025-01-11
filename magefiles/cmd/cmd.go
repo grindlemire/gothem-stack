@@ -172,3 +172,46 @@ func Run(ctx context.Context, opts ...cmdopt) (err error) {
 		}
 	}
 }
+
+// Output runs a command and returns its stdout output as bytes
+func Output(ctx context.Context, opts ...cmdopt) ([]byte, error) {
+	// Create a config with default values
+	conf := &cmdconf{
+		infoLog: os.Stdout,
+		errLog:  os.Stderr,
+		in:      os.Stdin,
+	}
+
+	// Apply all options
+	for _, opt := range opts {
+		err := opt(conf)
+		if err != nil {
+			return nil, errors.Wrap(err, "creating command config")
+		}
+	}
+
+	// Create the command
+	cmd := exec.CommandContext(ctx, conf.name, conf.args...)
+	cmd.Dir = conf.dir
+	cmd.Env = append(os.Environ(), conf.env...)
+	cmd.Stdin = conf.in
+
+	// Log the command if requested
+	if conf.logCMD {
+		zap.S().Infof("ENV: %s", conf.env)
+		zap.S().Infof("DIR: %s", cmd.Dir)
+		zap.S().Infof("CMD: %s", cmd.String())
+		zap.S().Infof("COPY: pushd %s; %s %s; popd", cmd.Dir, strings.Join(conf.env, " "), cmd.String())
+	}
+
+	// Run the command and capture output
+	output, err := cmd.Output()
+	if err != nil {
+		if exitErr, ok := err.(*exec.ExitError); ok {
+			return nil, errors.Wrapf(err, "command failed with stderr: %s", string(exitErr.Stderr))
+		}
+		return nil, errors.Wrap(err, "running command")
+	}
+
+	return output, nil
+}

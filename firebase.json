@@ -1,0 +1,27 @@
+{
+    "hosting": {
+        "public": "./dist/public",
+        "ignore": [
+            "firebase.json",
+            "**/.*",
+            "**/node_modules/**"
+        ],
+        "rewrites": [
+            {
+                "source": "/favicon.ico",
+                "destination": "/dist/favicon.ico"
+            },
+            {
+                "source": "/dist/**",
+                "destination": "/dist/**"
+            },
+            {
+                "source": "**",
+                "run": {
+                    "serviceId": "gothem-stack",
+                    "region": "us-central1"
+                }
+            }
+        ]
+    }
+}

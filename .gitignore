@@ -26,3 +26,13 @@ dist
 
 # Ignore tmp files
 tmp/
+
+# Ignore firebase
+.firebaserc
+.firebase/
+
+# Ignore env file
+*.env
+
+# Ignore version file
+version.txt

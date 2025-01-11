@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/grindlemire/gothem-stack/magefiles/cmd"
-
+	"github.com/pkg/errors"
 	"go.uber.org/zap"
 )
 
@@ -23,8 +23,8 @@ func templ(ctx context.Context) error {
 		),
 	)
 	if err != nil {
-		zap.S().Errorf("Error running air server: %v", err)
+		return errors.Wrap(err, "generating templ files")
 	}
-	return err
 
+	return nil
 }

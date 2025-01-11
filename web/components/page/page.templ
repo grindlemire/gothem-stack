@@ -2,17 +2,42 @@ package page
 
 templ Base(name string) {
 	<!DOCTYPE html>
-	<html lang="en" class="h-full" data-theme="light">
+	<html
+		lang="en"
+		class="h-full"
+		x-data="theme"
+		x-init="init()"
+		:data-theme="isDark ? 'dark' : 'light'"
+	>
 		<head>
 			<meta charset="UTF-8"/>
 			<title>{ name }</title>
 			<link rel="icon" href="/favicon.ico"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1"/>
 			<meta name="language" content="English"/>
-			<script src="https://unpkg.com/htmx.org@2.0.1" integrity="sha384-QWGpdj554B4ETpJJC9z+ZHJcA/i59TyjxEPXiiUgN2WmTyV5OEZWCD6gQhgkdpB/" crossorigin="anonymous"></script>
+			<script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script>
+			<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+			<script src="https://unpkg.com/hyperscript.org@0.9.13"></script>
 			<link rel="stylesheet" href="/dist/styles.min.css"/>
+			<script>
+				document.addEventListener('alpine:init', () => {
+					Alpine.data('theme', () => ({
+						isDark: localStorage.getItem('theme') === 'dark',
+						init() {
+							if (localStorage.getItem('theme') === null) {
+								this.isDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+								localStorage.setItem('theme', this.isDark ? 'dark' : 'light')
+							}
+						},
+						toggle() {
+							this.isDark = !this.isDark
+							localStorage.setItem('theme', this.isDark ? 'dark' : 'light')
+						}
+					}))
+				})
+			</script>
 		</head>
-		<body class="h-full cursor-default bg-slate-200" hx-sync="this:queue all">
+		<body class="h-full cursor-default bg-base-200" hx-sync="this:queue all">
 			{ children... }
 		</body>
 	</html>
