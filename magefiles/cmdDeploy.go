@@ -104,7 +104,7 @@ func deployBackend(ctx context.Context, ver version.Version) error {
 		return errors.Wrap(err, "failed to initialize artifact registry")
 	}
 
-	err = ensureCloudBuild(ctx, projectID, region, serviceName)
+	err = ensureCloudBuild(ctx, projectID)
 	if err != nil {
 		return errors.Wrap(err, "failed to initialize cloud build")
 	}
@@ -216,7 +216,7 @@ func ensureArtifactRegistry(ctx context.Context, projectID, region, repoName str
 	return nil
 }
 
-func ensureCloudBuild(ctx context.Context, projectID, region, serviceName string) error {
+func ensureCloudBuild(ctx context.Context, projectID string) error {
 	// Enable Cloud Build API
 	err := cmd.Run(ctx, cmd.WithCMD(
 		"gcloud", "services", "enable", "cloudbuild.googleapis.com",
