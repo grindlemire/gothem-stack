@@ -25,8 +25,8 @@ templ Page() {
 	}
 }
 
-templ StaticPage(inlineCSS ...string) {
-	@page.Base("static-home", inlineCSS...) {
+templ StaticPage() {
+	@page.Base("static-home") {
 		<div class="flex items-center justify-center min-h-screen">
 			<div class="card w-96 bg-base-100 shadow-xl">
 				<div class="card-body">

@@ -115,6 +115,22 @@ func Static() (err error) {
 	return static(WithConfig(ctx, os.Args[2:]...))
 }
 
+// Deploy will deploy the static site to Firebase hosting
+func Deploy() (err error) {
+	defer func(now time.Time) {
+		if r := recover(); r != nil {
+			err = errors.Errorf("%s", r)
+		}
+		finish(now, err)
+	}(time.Now())
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	// ignore the first two args since they are "mage" and "deploy"
+	return deploy(WithConfig(ctx, os.Args[2:]...))
+}
+
 func finish(start time.Time, err error) {
 	zap.S().Infof("elapsed time: %s", time.Since(start))
 	// This is a hack to get around the fact that mage treats command line args

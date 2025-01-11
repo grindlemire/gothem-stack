@@ -11,6 +11,9 @@ require (
 	go.uber.org/zap v1.27.0
 )
 
-require go.uber.org/multierr v1.11.0 // indirect
+require (
+	github.com/a-h/templ v0.2.747 // indirect
+	go.uber.org/multierr v1.11.0 // indirect
+)
 
 replace github.com/grindlemire/gothem-stack => ./..
