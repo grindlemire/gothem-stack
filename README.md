@@ -40,6 +40,8 @@ When you make changes to your templ files or any of your go code everything will
 ## Cloud Deployment (Optional)
 The project also includes optional support for deploying your code to Google Cloud Run and Firebase Hosting. To use these features, you'll need to set up Google Cloud and Firebase projects first.
 
+See the example running at [gothem-stack.web.app](https://gothem-stack.web.app/)
+
 ### Cloud Deployment Commands
 `mage auth [gcloud|firebase]` - Authenticate with Google Cloud or Firebase services
 
